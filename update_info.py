@@ -4,40 +4,30 @@ import hashlib
 import pandas as pd
 import json
 import os
+import requests 
+
+API_URL = "http://localhost:8000"
+
 
 st.title("🎨 Art Piece Management System")
 
 # ----------- File Management ------------
 def load_data():
     """Load art data from JSON file."""
-    if os.path.exists("art_pieces.json"):
-        with open("art_pieces.json", "r") as f:
-            data_dict = json.load(f)
-        # Convert to DataFrame for display
-        data_list = []
-        for key, value in data_dict.items():
-            value["id"] = key
-            data_list.append(value)
-        return pd.DataFrame(data_list), data_dict
-    else:
-        return pd.DataFrame(), {}
+    r = requests.get(f'{API_URL}/art')
+    data_dict = r.json()
+    data_list = [{'id':key, ** value} for key, value in data_dict.items()]
+    return pd.DataFrame(data_list), data_dict
 
 def save_data(data_dict):
     """Save art data to JSON file."""
-    with open("art_pieces.json", "w") as f:
-        json.dump(data_dict, f, indent=4)
-
-def generate_id(combined):
-    """Generate short unique ID."""
-    return hashlib.md5(combined.encode()).hexdigest()[:8]
+    response = requests.post(f"{API_URL}/art", json=data_dict)
 
 def delete_art(row_id, data_dict):
     """Delete an art record."""
-    if row_id in data_dict:
-        del data_dict[row_id]
-        save_data(data_dict)
-        return True
-    return False
+    r = requests.delete(f"{API_URL}/art/{row_id}")
+    return r.status_code == 200
+
 
 # ----------- Load Data ------------
 df, data_dict = load_data()
@@ -48,7 +38,7 @@ st.sidebar.header("🔍 Filter")
 if not df.empty:
     filter_author = st.sidebar.text_input("Filter by Author")
     filter_name = st.sidebar.text_input("Filter by Art Piece Name")
-    filter_category = st.sidebar.text_input("Filter by Category")
+    filter_form = st.sidebar.text_input("Filter by form")
     filter_location = st.sidebar.text_input("Filter by Storage Location")
     filter_description = st.sidebar.text_input("Filter by Description")
 
@@ -78,8 +68,8 @@ if not df.empty:
         filtered_df = filtered_df[filtered_df["author"].str.contains(filter_author, case=False, na=False)]
     if filter_name:
         filtered_df = filtered_df[filtered_df["name"].str.contains(filter_name, case=False, na=False)]
-    if filter_category:
-        filtered_df = filtered_df[filtered_df["category"].str.contains(filter_category, case=False, na=False)]
+    if filter_form:
+        filtered_df = filtered_df[filtered_df["form"].str.contains(filter_form, case=False, na=False)]
     if filter_location:
         filtered_df = filtered_df[filtered_df["location"].str.contains(filter_location, case=False, na=False)]
     if filter_description:
@@ -104,7 +94,7 @@ else:
     st.subheader("🖼️ Existing Art Pieces")
 
     header_cols = st.columns([2, 2, 2, 1, 2, 4, 1, 1])
-    headers = ["Author", "Name", "Category", "Year", "Location", "Description", "✏️ Edit", "🗑️ Delete"]
+    headers = ["Author", "Name", "form", "Year", "Location", "Description", "✏️ Edit", "🗑️ Delete"]
     for i, header in enumerate(headers):
         header_cols[i].markdown(f"**{header}**")
 
@@ -112,7 +102,7 @@ else:
         cols = st.columns([2, 2, 2, 1, 2, 3, 1, 1])
         cols[0].write(row["author"])
         cols[1].write(row["name"])
-        cols[2].write(row["category"])
+        cols[2].write(row["form"])
         cols[3].write(row.get("created_year", ""))
         cols[4].write(row["location"])
         cols[5].write(row.get("description", ""))
@@ -132,7 +122,7 @@ if "current_edit_id" in st.session_state and st.session_state.current_edit_id in
 
     edit_author = st.text_input("Author", current_data["author"])
     edit_name = st.text_input("Art Piece Name", current_data["name"])
-    edit_category = st.text_input("Category", current_data["category"])
+    edit_form = st.text_input("form", current_data["form"])
     edit_year = st.number_input(
         "Created Year",
         min_value=1000,
@@ -149,13 +139,13 @@ if "current_edit_id" in st.session_state and st.session_state.current_edit_id in
             updated = {
                 "author": edit_author,
                 "name": edit_name,
-                "category": edit_category,
+                "form": edit_form,
                 "created_year": int(edit_year),
                 "location": edit_location,
                 "description": edit_description,
             }
-            data_dict[st.session_state.current_edit_id] = updated
-            save_data(data_dict)
+            requests.put(f"{API_URL}/art/{st.session_state.current_edit_id}", json=updated)
+            # save_data(data_dict)
             st.success("Art piece updated successfully!")
             del st.session_state.current_edit_id
             st.rerun()
@@ -169,29 +159,24 @@ st.subheader("➕ Add New Art Piece")
 
 new_author = st.text_input("Author", key="new_author")
 new_name = st.text_input("Art Piece Name", key="new_name")
-new_category = st.text_input("Category", key="new_category")
+new_form = st.text_input("form", key="new_form")
 new_year = st.number_input("Created Year", min_value=1000, max_value=9999, value=datetime.now().year, step=1)
 new_location = st.text_input("Storage Location", key="new_location")
 new_description = st.text_area("Description", key="new_description")
 
 if st.button("💾 Save New Art Piece"):
-    if new_author and new_name and new_category and new_location:
-        combined = f"{new_author}-{new_name}-{new_category}-{new_year}-{new_location}-{new_description[:20]}"
-        art_id = generate_id(combined)
-
-        if art_id in data_dict:
-            st.error("This art piece already exists.")
-        else:
-            data_dict[art_id] = {
+    if new_author and new_name and new_form and new_location:
+        combined = f"{new_author}-{new_name}-{new_form}-{new_year}-{new_location}-{new_description[:20]}"
+        data_dict = {
                 "author": new_author,
                 "name": new_name,
-                "category": new_category,
+                "form": new_form,
                 "created_year": int(new_year),
                 "location": new_location,
                 "description": new_description,
             }
-            save_data(data_dict)
-            st.success("New art piece added!")
-            st.rerun()
+        save_data(data_dict)
+        st.success("New art piece added!")
+        st.rerun()
     else:
         st.error("Please fill in all fields before saving.")

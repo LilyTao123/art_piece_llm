@@ -1,0 +1,100 @@
+{
+    "9c42f5e8": {
+        "author": "Carl Andre",
+        "name": "Equivalent VIII",
+        "form": "Sculpture",
+        "created_year": 1966,
+        "location": "Tate Modern",
+        "description": "Each of Andre's eight sculptures in the Equivalent series consists of a cuboidal arrangement of 120 firebricks. They all are the same in size and shape. The art comes for the controversy it brought, that Equivalent VIII is a textbook illustration of minimal art that should stay in a textbook. No-one should be made to look at it in a gallery.",
+        "id": "9c42f5e8"
+    },
+    "7f8fbbee": {
+        "author": "Jeff Koons",
+        "name": "Puppy",
+        "form": "Sculpture",
+        "created_year": 1992,
+        "location": "outside the Guggenheim Museum Bilbao",
+        "description": "It is known for its cheerful, sentimental, and ever-changing appearance due to the seasonal replacement of thousands of flowers. The work is intended to evoke feelings of confidence, security, and joy, and it has become an iconic symbol for the museum. ",
+        "id": "7f8fbbee"
+    },
+    "59d3f13f": {
+        "author": "Marcel Duchamp",
+        "name": "Fountain",
+        "form": "Concept",
+        "created_year": 1917,
+        "location": "Doesn't matter",
+        "description": "It explores the question of what qualifies as art. Does art need to be a tangible, physical object that is difficult to reproduce? The author argues that only artists themselves can define what art truly is, and the idea should come before form.",
+        "id": "59d3f13f"
+    },
+    "c37c1128": {
+        "author": "Claude Monet",
+        "name": "Reflections of Clouds on the Water-Lily Pond",
+        "form": "Painting",
+        "created_year": 1920,
+        "location": "Mus\u00e9e de l'Orangerie",
+        "description": "A beautiful painting, and painting doesn't have to be the same as reality",
+        "id": "c37c1128"
+    },
+    "c9de2994": {
+        "author": "Th\u00e9odore G\u00e9ricault",
+        "name": "The Raft of the Medusa",
+        "form": "painting",
+        "created_year": 1818,
+        "location": "Louvre Museum ",
+        "description": "It depicts the real and horrific consequences of an incompetent French sea caption's decision to sail too close to the shoreline off Senegal. It renders the grim human catastrophe of the resulting shipwreck with unflinching detail. He ups the emotional ante by using a theatrical style of painting, where bold contrasts between light and shade are accentuated to dramatic effect.",
+        "id": "c9de2994"
+    },
+    "7d452a38": {
+        "author": "Eug\u00e8ne Delacroix",
+        "name": "Liberty Leading the People",
+        "form": "painting",
+        "created_year": 1830,
+        "location": "Louvre Museum",
+        "description": "The main character is a strident woman, personifying Liberty, rallying rebel fighters in the midst of battle and leading them over the bodies of the fallen. In one hand she waves the tricolour flag of the French Revolution, and in the other she grips a bayoneted musket. The scene alludes to the overthrow of the last Bourbon King.",
+        "id": "7d452a38"
+    },
+    "33960b5c": {
+        "author": "Gustave Courbet",
+        "name": "The Origin of the World",
+        "form": "Painting",
+        "created_year": 1866,
+        "location": "Mus\u00e9e d'Orsay",
+        "description": "It's one of the most notorious works in art history, famed for its blunt, no-holds-barred portrayal of a naked female torso shown only from breast to thigh, with legs wide open, and cropped by author to achieve maximum.",
+        "id": "33960b5c"
+    },
+    "ba511855": {
+        "author": "\u00c9douard Manet",
+        "name": "The Absinthe Drinker",
+        "form": "Painting",
+        "created_year": 1859,
+        "location": "Ny Carlsberg Glyptotek",
+        "description": "It's a portrait of a Parisian low-life: a down-and-out drunk living on the margins of society, a victim of the city's ongoing modernisation. The Absinthe Drinker perches on a low wall, as does a full glass of the strong liquor to his right. He stares drunkenly over the viewer's left shoulder into the middle distance, the evidence of his intoxication made apparent by an empty bottle lying at his feet.",
+        "id": "ba511855"
+    },
+    "9cdecf1d": {
+        "author": "\u00c9douard Manet",
+        "name": "The Luncheon on the Grass",
+        "form": "Painting",
+        "created_year": 1863,
+        "location": "Mus\u00e9e d'Orsay",
+        "description": "It features a naked woman sitting on grass having a bourgeois picnic in a park. Around her are well-dressed men, dressed smartly in fashionable clothes, handsome jackets and ties, paired with well-tailored trousers and dark leather shoes, appearing quite innocent.",
+        "id": "9cdecf1d"
+    },
+    "642339bf": {
+        "author": "\u00c9douard Manet",
+        "name": "Olympia",
+        "form": "Painting",
+        "created_year": 1863,
+        "location": "Mus\u00e9e d'Orsay",
+        "description": "It depicted a modern prostitute presented with unabashed Courbet-like realism, the dark background coupled with her few decorative adornments such as a necklace and bracelet, only served to heighten her nakedness. A black cat, a removed slipper which implies her lost innocence, a bunch of  flowers and an orchid placed jauntily in her hair alluded to the sexual act.",
+        "id": "642339bf"
+    },
+    "0280507d": {
+        "author": "Claude Monet",
+        "name": "Sunrise",
+        "form": "painting",
+        "created_year": 1872,
+        "location": "Mus\u00e9e Marmottan Monet",
+        "description": "It shows a reddish-orange morning sun rising wearily from the sea and into the sky like an employee struggling out of bed on a miserable Monday in winter. The fiery ball is not quite bright enough to burn off the foggy blue air that shrouds the sailing ship and rowing boats, but has sufficient energy to provoke the cold purple morning sea into producing a warming orange reflection on its surface not unlike a single heated bar on an electric fire."
+    }
+}
