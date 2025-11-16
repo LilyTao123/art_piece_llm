@@ -40,6 +40,11 @@ def get_all_art():
     data = load_data()
     return data
 
+@app.get("/art/{art_id}")
+def get_single_art(art_id: str):
+    data = load_data()
+    return data[art_id]
+
 @app.post("/art")
 def add_art(item: ArtPiece):
     data = load_data()
