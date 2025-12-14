@@ -32,7 +32,7 @@ if st.button("提交"):
     res = requests.get(API_BASE + "/get-upload-url")
     data = res.json()
     st.write(data)
-    upload_url = data["uploadUrl"]
+    upload_url = data["upload_url"]
     file_key = data["fileKey"]
 
     st.info("正在上传图片到 S3...")
