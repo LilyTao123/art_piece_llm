@@ -4,75 +4,71 @@ import json
 
 API_BASE = "https://5zny2nzif1.execute-api.us-east-1.amazonaws.com/dev"
 
-st.title("艺术品管理系统（Streamlit）")
+st.title("The art you loved")
 
-st.header("上传艺术品")
+st.header("Upload the picture")
 
-# 1) 图片上传（本地先上传）
-file = st.file_uploader("选择图片文件", type=["jpg", "jpeg", "png"])
+# 1) upload the picture
+file = st.file_uploader("choose the format of picture", type=["jpg", "jpeg", "png"])
 
-# 2) 艺术品信息表单
-title = st.text_input("艺术品名称")
-artist = st.text_input("艺术家")
-year = st.number_input("年份", min_value=0, max_value=3000, step=1)
-material = st.text_input("材质")
-size = st.text_input("尺寸（如 50x70cm）")
-description = st.text_area("描述")
-tags = st.text_input("标签（用逗号隔开）")
-notes = st.text_area("备注")
+# 2) the information list
+title = st.text_input("art title")
+artist = st.text_input("artist")
+year = st.number_input("created year", min_value=0, max_value=3000, step=1)
+material = st.text_input("material")
+size = st.text_input("size 50x70cm）")
+description = st.text_area("description")
+tags = st.text_input("tags")
+notes = st.text_area("notes")
 
-if st.button("提交"):
+if st.button("Submit"):
     if not file:
-        st.error("请先选择一张图片！")
+        st.error("Please choose a picture")
         st.stop()
 
-    st.info("正在获取上传链接...")
+    st.info("Getting the url..")
 
-    # Step 1: 调用 get-upload-url API
     res = requests.get(API_BASE + "/get-upload-url")
     data = res.json()
     st.write(data)
     upload_url = data["upload_url"]
-    file_key = data["fileKey"]
+    image_url = data["image_url"]
+    image_id = data["image_id"]
 
-    st.info("正在上传图片到 S3...")
+    st.info("Uploading picture to S3...")
 
-    # Step 2: 把图片 PUT 到预签名 URL
-    headers = {"Content-Type": file.type}
-    upload_res = requests.put(upload_url, data=file.getvalue(), headers=headers)
+    upload_res = requests.put(upload_url, data=file.getvalue())
 
     if upload_res.status_code != 200:
-        st.error("图片上传失败")
+        st.error("Picture upload failed! ")
         st.write(upload_res.text)
         st.stop()
 
-    st.success("图片上传成功！")
+    st.success("Picture uploaded")
 
-    # Step 3: 构建艺术品记录 JSON
     art_info = {
-        "id": file_key,  # 用图片文件名作为 ID 也可以
+        "id": image_id,  
         "title": title,
         "artist": artist,
-        "year": int(year),
+        "createdyear": int(year),
         "material": material,
         "size": size,
         "description": description,
-        "image_url": f"https://artwork-info-app.s3.amazonaws.com/{file_key}",
+        "image_url": image_url,
         "tags": [t.strip() for t in tags.split(",")] if tags else [],
         "notes": notes
     }
 
-    st.info("正在保存艺术品信息到数据库...")
+    st.info("Saving the information...")
 
-    # Step 4: 提交 save-art API
     save_res = requests.post(
         API_BASE + "/save-art",
         data=json.dumps(art_info)
     )
 
     if save_res.status_code == 200:
-        st.success("艺术品上传成功！")
+        st.success("Uploaded successfully！")
         st.write(art_info)
     else:
-        st.error("保存失败")
+        st.error("Failed")
         st.write(save_res.text)
