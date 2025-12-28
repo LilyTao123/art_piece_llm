@@ -1,8 +1,10 @@
 import streamlit as st
 import requests
 import json
+import cv2
 
 API_BASE = "https://5zny2nzif1.execute-api.us-east-1.amazonaws.com/dev"
+orb = cv2.ORB_create()
 
 st.title("The art you loved")
 
@@ -37,6 +39,8 @@ if st.button("Submit"):
 
     st.info("Uploading picture to S3...")
 
+    st.session_state.file = file
+    keypoints, descriptors = orb.detectAndCompute(st.session_state.file, None)
     upload_res = requests.put(upload_url, data=file.getvalue())
 
     if upload_res.status_code != 200:
@@ -56,7 +60,8 @@ if st.button("Submit"):
         "size": size,
         "description": description,
         "image_url": image_url,
-        "tags": [t.strip() for t in tags.split(",")] if tags else []
+        "tags": [t.strip() for t in tags.split(",")] if tags else [],
+        "descriptors": descriptors
     }
 
     st.info("Saving the information...")
