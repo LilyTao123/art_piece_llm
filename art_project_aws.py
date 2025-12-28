@@ -16,10 +16,10 @@ title = st.text_input("art title")
 artist = st.text_input("artist")
 year = st.number_input("created year", min_value=0, max_value=3000, step=1)
 material = st.text_input("material")
+location = st.text_input("location")
 size = st.text_input("size 50x70cm）")
 description = st.text_area("description")
 tags = st.text_input("tags")
-notes = st.text_area("notes")
 
 if st.button("Submit"):
     if not file:
@@ -52,18 +52,21 @@ if st.button("Submit"):
         "artist": artist,
         "createdyear": int(year),
         "material": material,
+        "location": location,
         "size": size,
         "description": description,
         "image_url": image_url,
-        "tags": [t.strip() for t in tags.split(",")] if tags else [],
-        "notes": notes
+        "tags": [t.strip() for t in tags.split(",")] if tags else []
     }
 
     st.info("Saving the information...")
 
+    headers={
+        "Content-Type": "application/json"
+    }
     save_res = requests.post(
         API_BASE + "/save-art",
-        data=json.dumps(art_info)
+        data=json.dumps(art_info), headers = headers
     )
 
     if save_res.status_code == 200:
