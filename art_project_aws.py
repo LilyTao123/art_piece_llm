@@ -2,9 +2,17 @@ import streamlit as st
 import requests
 import json
 import cv2
+import numpy as np
+import uuid
+
+from generate_unique_key import generate_artwork_id
 
 API_BASE = "https://5zny2nzif1.execute-api.us-east-1.amazonaws.com/dev"
 orb = cv2.ORB_create()
+
+headers={
+        "Content-Type": "application/json"
+    }
 
 st.title("The art you loved")
 
@@ -23,6 +31,12 @@ size = st.text_input("size 50x70cm）")
 description = st.text_area("description")
 tags = st.text_input("tags")
 
+art_info1 = {
+        "title": title,
+        "artist": artist,
+        "createdyear": int(year),  
+}
+
 if st.button("Submit"):
     if not file:
         st.error("Please choose a picture")
@@ -30,17 +44,20 @@ if st.button("Submit"):
 
     st.info("Getting the url..")
 
-    res = requests.get(API_BASE + "/get-upload-url")
+    res = requests.post(API_BASE + "/get-upload-url", 
+                        data = json.dumps(art_info1),
+                        headers = headers)
     data = res.json()
     st.write(data)
     upload_url = data["upload_url"]
     image_url = data["image_url"]
-    image_id = data["image_id"]
+    artwork_id = data["artwork_id"]
 
     st.info("Uploading picture to S3...")
 
-    st.session_state.file = file
-    keypoints, descriptors = orb.detectAndCompute(st.session_state.file, None)
+    # file_bytes = np.asarray(bytearray(file.read()), dtype=np.uint8)
+    # img = cv2.imdecode(file_bytes, cv2.IMREAD_GRAYSCALE)
+    # keypoints, descriptors = orb.detectAndCompute(img, None)
     upload_res = requests.put(upload_url, data=file.getvalue())
 
     if upload_res.status_code != 200:
@@ -51,7 +68,7 @@ if st.button("Submit"):
     st.success("Picture uploaded")
 
     art_info = {
-        "id": image_id,  
+        "id": artwork_id,  
         "title": title,
         "artist": artist,
         "createdyear": int(year),
@@ -60,15 +77,12 @@ if st.button("Submit"):
         "size": size,
         "description": description,
         "image_url": image_url,
-        "tags": [t.strip() for t in tags.split(",")] if tags else [],
-        "descriptors": descriptors
+        "tags": [t.strip() for t in tags.split(",")] if tags else []
+        # "descriptors": descriptors
     }
 
     st.info("Saving the information...")
 
-    headers={
-        "Content-Type": "application/json"
-    }
     save_res = requests.post(
         API_BASE + "/save-art",
         data=json.dumps(art_info), headers = headers
