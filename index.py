@@ -27,12 +27,14 @@ def generate_image_embedding(image):
     emb = emb.detach().cpu().numpy().astype('float32') # convert to NumPy float32
     return emb
 
-def save_image_index(xb):
+def save_image_index(xb, image_id=1):
     if Path("my_index.faiss").exists():
         index = faiss.read_index("my_index.faiss")
     else:
         index = faiss.IndexFlatL2(dimension)
-    index.add(xb)
+        index = faiss.IndexIDMap(index)
+    ids = np.array([image_id], dtype=np.int64)
+    index.add_with_ids(xb,ids)
     faiss.write_index(index, "my_index.faiss")
     print('success')
 

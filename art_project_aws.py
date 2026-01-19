@@ -5,6 +5,7 @@ import cv2
 import numpy as np
 import uuid
 
+from index import generate_image_embedding, save_image_index
 from generate_unique_key import generate_artwork_id
 
 API_BASE = "https://5zny2nzif1.execute-api.us-east-1.amazonaws.com/dev"
