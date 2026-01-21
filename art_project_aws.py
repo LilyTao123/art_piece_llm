@@ -6,7 +6,6 @@ import numpy as np
 import uuid
 
 from index import generate_image_embedding, save_image_index
-from generate_unique_key import generate_artwork_id
 
 API_BASE = "https://5zny2nzif1.execute-api.us-east-1.amazonaws.com/dev"
 orb = cv2.ORB_create()
@@ -49,16 +48,12 @@ if st.button("Submit"):
                         data = json.dumps(art_info1),
                         headers = headers)
     data = res.json()
-    st.write(data)
     upload_url = data["upload_url"]
     image_url = data["image_url"]
     artwork_id = data["artwork_id"]
 
     st.info("Uploading picture to S3...")
 
-    # file_bytes = np.asarray(bytearray(file.read()), dtype=np.uint8)
-    # img = cv2.imdecode(file_bytes, cv2.IMREAD_GRAYSCALE)
-    # keypoints, descriptors = orb.detectAndCompute(img, None)
     upload_res = requests.put(upload_url, data=file.getvalue())
 
     if upload_res.status_code != 200:
@@ -88,10 +83,15 @@ if st.button("Submit"):
         API_BASE + "/save-art",
         data=json.dumps(art_info), headers = headers
     )
+    res_body = save_res.json()
+    
 
     if save_res.status_code == 200:
         st.success("Uploaded successfully！")
-        st.write(art_info)
+        image_id = res_body["item"]["seqId"]
+        embd = generate_image_embedding(file)    
+        save_image_index(embd, image_id)
     else:
         st.error("Failed")
         st.write(save_res.text)
+
