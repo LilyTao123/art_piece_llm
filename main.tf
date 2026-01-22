@@ -37,11 +37,22 @@ resource "aws_s3_bucket_public_access_block" "block_public" {
 resource "aws_dynamodb_table" "artwork_table" {
   name         = var.dynamodb_table
   billing_mode = "PAY_PER_REQUEST"  # 小项目用按需，不用手动设置 capacity
-  hash_key     = "Id"
+  hash_key     = "id"
 
   attribute {
-    name = "Id"
+    name = "id"
     type = "S"
+  }
+
+  attribute {
+    name = "seq_id"
+    type = "N"
+  }
+
+  global_secondary_index {
+    name            = "seq_id-index"
+    hash_key        = "seq_id"
+    projection_type = "ALL"
   }
 
   ttl {
@@ -57,11 +68,11 @@ resource "aws_dynamodb_table" "artwork_table" {
 
 resource "aws_dynamodb_table_item" "seq_item" {
   table_name = aws_dynamodb_table.artwork_table.name
-  hash_key   = "Id"
+  hash_key   = "id"
 
   item = jsonencode({
-    Id      = { S = "__SEQ__" }
-    Current = { N = "0" }  # 注意这里是字符串 "0"，表示数字
+    id      = { S = "__SEQ__" }
+    current = { N = "0" }  # 注意这里是字符串 "0"，表示数字
   })
   depends_on = [aws_dynamodb_table.artwork_table]
 }
