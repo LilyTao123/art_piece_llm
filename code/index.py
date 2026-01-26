@@ -45,7 +45,7 @@ def search_nearest_image(image, k:int = 2):
         return 'No index to search'
     search_embd = generate_image_embedding(image)
     D, image_id = index.search(search_embd, k)
-    print(D)
+    print(f"distance is {D}")
     return image_id
 
 

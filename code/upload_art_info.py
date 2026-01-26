@@ -1,7 +1,6 @@
 import streamlit as st
 import requests
 import json
-import cv2
 import numpy as np
 import uuid
 from PIL import Image
@@ -11,7 +10,6 @@ from index import generate_image_embedding, save_image_index, search_nearest_ima
 
 def page_upload_pic():
     API_BASE = "https://5zny2nzif1.execute-api.us-east-1.amazonaws.com/dev"
-    orb = cv2.ORB_create()
 
     headers={
             "Content-Type": "application/json"
@@ -55,17 +53,6 @@ def page_upload_pic():
         image_url = data["image_url"]
         artwork_id = data["artwork_id"]
 
-        st.info("Uploading picture to S3...")
-
-        upload_res = requests.put(upload_url, data=file.getvalue())
-
-        if upload_res.status_code != 200:
-            st.error("Picture upload failed! ")
-            st.write(upload_res.text)
-            st.stop()
-
-        st.success("Picture uploaded")
-
         art_info = {
             "id": artwork_id,  
             "title": title,
@@ -77,7 +64,6 @@ def page_upload_pic():
             "description": description,
             "image_url": image_url,
             "tags": [t.strip() for t in tags.split(",")] if tags else []
-            # "descriptors": descriptors
         }
 
         st.info("Saving the information...")
@@ -90,8 +76,26 @@ def page_upload_pic():
         
 
         if save_res.status_code == 200:
-            st.success("Uploaded successfully！")
-            image_id = res_body["item"]["seqId"]
+            st.success("Information Uploaded successfully！")
+
+            st.info("Uploading picture to S3...")
+
+            upload_res = requests.put(upload_url, data=file.getvalue())
+
+            if upload_res.status_code != 200:
+                st.error("Picture upload failed! ")
+                st.write(upload_res.text)
+                res = requests.delete(
+                    f"{API_BASE}/delete-art",
+                    headers=headers,
+                    params={"art_id": artwork_id}  # <-- use params for query string
+                )
+                st.write(res.status_code, res.text)
+                st.stop()
+
+            st.success("Picture uploaded")
+
+            image_id = res_body["item"]["seq_id"]
             image = Image.open(file).convert("RGB")
             embd = generate_image_embedding(image)    
             save_image_index(embd, image_id)
@@ -99,3 +103,4 @@ def page_upload_pic():
             st.error("Failed")
             st.write(save_res.text)
 
+page_upload_pic()
