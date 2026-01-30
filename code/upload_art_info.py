@@ -102,5 +102,3 @@ def page_upload_pic():
         else:
             st.error("Failed")
             st.write(save_res.text)
-
-page_upload_pic()

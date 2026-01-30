@@ -20,12 +20,11 @@ def page_scan_art():
         if not file:
             st.error("Please choose a picture")
             st.stop()
-        image = Image.open(file).convert("RGB")
-        embd = generate_image_embedding(image)
-        seq_id = search_nearest_image(embd, k=1)
+        image = Image.open(file)
+        st.write(image)
+        seq_id = search_nearest_image(image, k=1)
         st.write(seq_id)
         res = requests.get(API_BASE + "/art",
                     headers=headers,
                     params={"id": seq_id})
         data = res.json()
-        st.write(data[0])
